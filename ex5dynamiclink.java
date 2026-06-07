@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
 
         TextView tv = new TextView(this);
-        tv.setText(gson.toJson("Hello"));
+        tv.setText(gson.toJson("Dynamic linking"));
 
         setContentView(tv);
     }
