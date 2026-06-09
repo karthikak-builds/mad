@@ -1,0 +1,50 @@
+import android.content.ContentValues; 
+import android.net.Uri;
+import android.os.Bundle; import
+android.os.Environment;
+import android.provider.MediaStore; 
+import android.view.View;
+import android.widget.Button; 
+import android.widget.EditText; 
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity; 
+import java.io.OutputStream;public class MainActivity extends AppCompatActivity {
+EditText editText; 
+Button saveBtn;
+@Override
+protected void onCreate(Bundle savedInstanceState) { 
+super.onCreate(savedInstanceState); 
+setContentView(R.layout.activity_main);
+editText = findViewById(R.id.editText); 
+saveBtn = findViewById(R.id.saveBtn);
+saveBtn.setOnClickListener(new View.OnClickListener() { 
+@Override
+public void onClick(View view) { saveToDownloads(editText.getText().toString());
+}
+});
+}
+private void saveToDownloads(String text) { if 
+(text.isEmpty()) {
+Toast.makeText(this, "Enter some text", Toast.LENGTH_SHORT).show(); return;
+}
+// Unique file name (so each click creates a new file)
+String fileName = "file_" + System.currentTimeMillis() + ".txt";
+ContentValues values = new ContentValues(); 
+values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName); 
+values.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain"); 
+values.put(MediaStore.MediaColumns.RELATIVE_PATH,
+Environment.DIRECTORY_DOWNLOADS + "/MyAppFolder");
+Uri uri = getContentResolver().insert( 
+MediaStore.Files.getContentUri("external"), values
+);
+try {
+OutputStream os = getContentResolver().openOutputStream(uri); 
+os.write(text.getBytes());os.close();
+Toast.makeText(this, "File created in Downloads/MyAppFolder", Toast.LENGTH_LONG).show();
+editText.setText(""); // clear input
+} catch (Exception e) { 
+e.printStackTrace();
+Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+}
+}
+}
