@@ -1,0 +1,87 @@
+import androidx.appcompat.app.AppCompatActivity; 
+import android.os.Bundle;
+import android.widget.Button; 
+import android.widget.LinearLayout; 
+import android.widget.TextView;
+public class MainActivity extends AppCompatActivity { 
+Button btn;
+LinearLayout container; 
+int taskCount = 1; 
+@Override
+protected void onCreate(Bundle savedInstanceState) { 
+super.onCreate(savedInstanceState); 
+setContentView(R.layout.activity_main);
+btn = findViewById(R.id.button); 
+container = findViewById(R.id.container); 
+btn.setOnClickListener(v -> {
+int currentTask = taskCount++; 
+new Thread(() -> {
+runOnUiThread(() -> {
+TextView startTv = new TextView(this); 
+startTv.setText("● Task " + currentTask + " Started"); 
+startTv.setTextSize(16);
+startTv.setPadding(0, 10, 0, 10); 
+container.addView(startTv);
+});
+for (int i = 1; i <= 5; i++) { 
+int step = i;
+try {
+Thread.sleep(1000); 
+runOnUiThread(() -> {
+TextView stepTv = new TextView(this); 
+stepTv.setText("Task " + currentTask + " → Step " + step); 
+container.addView(stepTv);
+});
+} catch (Exception e) { 
+e.printStackTrace();
+}
+}
+runOnUiThread(() -> {
+TextView endTv = new TextView(this);
+endTv.setText("⬛ Task " + currentTask + "
+Completed"); endTv.setPadding(0, 10, 0, 20);
+container.addView(endTv);
+});
+}).start();
+}); }
+}
+
+<TextView
+android:id="@+id/textView" 
+android:layout_width="wrap_content"
+android:layout_height="wrap_content" 
+android:text="Task Monitor" 
+android:textSize="20sp" 
+android:textStyle="bold" 
+android:padding="16dp" 
+app:layout_constraintTop_toTopOf="parent" 
+app:layout_constraintStart_toStartOf="parent" 
+app:layout_constraintEnd_toEndOf="parent"/>
+<!-- Scrollable Task Area -->
+<ScrollView 
+android:id="@+id/scrollView" 
+android:layout_width="0dp" 
+android:layout_height="300dp" 
+android:background="#EFEFEF" 
+android:padding="8dp"
+app:layout_constraintTop_toBottomOf="@id/textView" 
+app:layout_constraintBottom_toTopOf="@id/button" 
+app:layout_constraintStart_toStartOf="parent" 
+app:layout_constraintEnd_toEndOf="parent">
+<LinearLayout 
+android:id="@+id/container" 
+android:layout_width="match_parent" 
+android:layout_height="wrap_content" 
+android:orientation="vertical"/>
+</ScrollView>
+<!-- Button -->
+<Button
+android:id="@+id/button" 
+android:layout_width="wrap_content" 
+android:layout_height="wrap_content"
+android:text="Start Task" 
+app:layout_constraintTop_toBottomOf="@id/scrollView" 
+app:layout_constraintBottom_toBottomOf="parent" 
+app:layout_constraintStart_toStartOf="parent" 
+app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
