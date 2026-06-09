@@ -1,0 +1,43 @@
+import android.widget.TextView;
+import android.content.pm.PackageManager;
+public class MainActivity extends AppCompatActivity implements LocationListener {
+WebView webView; 
+Button btnLocation; 
+TextView tvLocation;
+LocationManager locationManager;
+@SuppressLint("MissingPermission")
+@Override
+protected void onCreate(Bundle savedInstanceState) { 
+super.onCreate(savedInstanceState); 
+setContentView(R.layout.activity_main);
+webView = findViewById(R.id.webView); 
+btnLocation = findViewById(R.id.btnLocation); 
+tvLocation = findViewById(R.id.tvLocation);
+// Load Website 
+webView.getSettings().setJavaScriptEnabled(true); 
+webView.loadUrl("https://www.google.com");
+// Location Button Click 
+btnLocation.setOnClickListener(v -> {
+locationManager = (LocationManager) getSystemService(LOCATION_SERVICE); 
+locationManager.requestLocationUpdates(
+LocationManager.GPS_PROVIDER, 
+5000,
+5,this
+);
+});
+}
+@Override
+public void onLocationChanged(@NonNull Location location) { 
+double lat = location.getLatitude();
+double lon = location.getLongitude();
+tvLocation.setText("Latitude: " + lat + "\nLongitude: " + lon);
+}
+}
+Add Runtime Permission (Must for Android 6+) 
+Add this inside onCreate():
+if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+!= PackageManager.PERMISSION_GRANTED) {
+requestPermissions(new String[]{ 
+android.Manifest.permission.ACCESS_FINE_LOCATION
+}, 1);
+}
